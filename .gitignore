@@ -8,4 +8,6 @@
 *.swo
 settings.local.json
 
-command-ideas.md
+design/
+
+
