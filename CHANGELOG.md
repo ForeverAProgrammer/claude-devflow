@@ -4,6 +4,7 @@
 
 ### Features
 
+- Added `/implement-lld` command to read an LLD file and apply the code changes it describes, skipping stub sections and leaving commit to the user (this commit)
 - Updated `/lld` command to support `--hld <path>` flag for generating an LLD from an existing HLD file, with automatic back-link in the Overview section (this commit)
 - Updated `/lld` and `/hld` commands to output to a `design/` subfolder, creating it if it does not exist (this commit)
 - Updated README to add table of contents, restructure Commands section into per-command subsections, and merge Usage section into Commands (this commit)
