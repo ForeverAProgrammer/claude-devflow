@@ -36,6 +36,7 @@ cd claude-commands && git pull
 | `/create-pr-github` | Create a GitHub PR from the current branch using `gh` |
 | `/resolve-conflicts` | Rebase the current branch onto the PR target branch and resolve conflicts |
 | `/review` | Review code or a diff and give structured feedback with severity levels |
+| `/sync` | Fetch and rebase the current branch onto the default branch |
 
 ## Usage
 
@@ -209,6 +210,16 @@ Fetches the latest remote changes, rebases the current branch onto the PR's targ
 > **Looks good**
 >
 > - TTL is set atomically with the counter increment — no race condition
+
+**`/sync`** — no input needed, fetches and rebases onto the default branch:
+
+```text
+/sync
+```
+
+> Branch is up to date with `origin/main`.
+
+The default branch is detected automatically via `gh`. If that fails, it checks for `main` or `master` on the remote — if both exist, it asks which to use. If there are conflicts, it lists the affected files and stops — it does not attempt to resolve them automatically.
 
 ## Uninstall
 

@@ -4,7 +4,8 @@
 
 ### Features
 
-- Added `/resolve-conflicts` command to rebase the current branch onto the PR target branch and resolve conflicts automatically (this commit)
+- Added `/sync` command to fetch and rebase the current branch onto the default branch, with automatic default branch detection and conflict reporting (e3682b3)
+- Added `/resolve-conflicts` command to rebase the current branch onto the PR target branch and resolve conflicts automatically (99dd4d5)
 - Added `/review` command to give structured code feedback with severity levels, from uncommitted changes, a file, or pasted code (3e67667)
 - Added `/tag-release-ansible` command to bump version in `galaxy.yml` or `meta/main.yml`, tag, and push for Ansible Galaxy collections and roles (740369d)
 - Added `/tag-release-npm` command to bump `package.json` version via `npm version`, commit, tag, and push for npm projects (740369d)
