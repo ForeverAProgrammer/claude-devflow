@@ -30,6 +30,8 @@ cd claude-commands && git pull
 | `/pr` | Generate a PR title and description from a summary or diff |
 | `/email` | Turn rough notes into a polished professional email |
 | `/action-items` | Extract action items from meeting notes or a wall of text |
+| `/jira-ticket` | Turn a rough description into a well-formed Jira/Linear-style ticket with acceptance criteria |
+| `/jira-ticket-git` | Generate a Jira/Linear-style ticket from the current git changes or last commit |
 | `/changelog` | Generate a changelog from commits since the last git tag |
 | `/commit` | Generate a conventional commit message from current branch changes |
 | `/create-branch` | Create a branch named to match the current uncommitted changes |
@@ -119,6 +121,51 @@ review the Q3 roadmap before Friday's planning session.
 > - [ ] @sara — follow up with infra team on API keys
 > - [ ] @john — update the onboarding doc with new flow
 > - [ ] @all — review the Q3 roadmap before Friday
+
+**`/jira-ticket`** — paste a rough description to get a structured ticket:
+
+```text
+/jira-ticket users should be able to reset their password via email
+```
+
+> **Title:** Add password reset via email
+>
+> **Type:** Story
+>
+> **Description:** Users currently have no self-service way to recover access when they forget their password. This ticket adds a password reset flow that sends a time-limited link to the user's registered email address.
+>
+> **Acceptance Criteria**
+>
+> - [ ] Requesting a reset for an unknown email returns the same response as a known email (no user enumeration)
+> - [ ] Reset links expire after 1 hour and cannot be reused
+> - [ ] Clicking a valid link allows the user to set a new password and logs them in
+> - [ ] Clicking an expired or already-used link shows a clear error message
+>
+> **Out of Scope**
+>
+> - SMS-based reset
+> - Admin-triggered password resets
+
+**`/jira-ticket-git`** — no input needed, reads your current changes or last commit automatically:
+
+```text
+/jira-ticket-git
+```
+
+> **Title:** Add password reset via email
+>
+> **Type:** Story
+>
+> **Description:** Users have no self-service way to recover access when they forget their password. This adds a reset flow that sends a time-limited link to the user's registered email address.
+>
+> **Acceptance Criteria**
+>
+> - [ ] Requesting a reset for an unknown email returns the same response as a known one (no user enumeration)
+> - [ ] Reset links expire after 1 hour and cannot be reused
+> - [ ] A valid link lets the user set a new password and logs them in
+> - [ ] An expired or already-used link shows a clear error
+
+Uses staged changes if any are staged, falls back to all uncommitted changes, then falls back to the last commit.
 
 **`/changelog`** — no input needed, reads commits since the last tag automatically:
 
