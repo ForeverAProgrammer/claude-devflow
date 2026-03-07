@@ -25,6 +25,7 @@ This symlinks all commands into `~/.claude/commands/`, making them available glo
 | `/email` | Turn rough notes into a polished professional email |
 | `/action-items` | Extract action items from meeting notes or a wall of text |
 | `/commit` | Generate a conventional commit message from current branch changes |
+| `/create-branch` | Create a branch named to match the current uncommitted changes |
 | `/create-pr-github` | Create a GitHub PR from the current branch using `gh` |
 
 ## Usage
@@ -118,6 +119,16 @@ review the Q3 roadmap before Friday's planning session.
 > `fix: resolve null pointer in checkout when cart is empty`
 
 If there are staged changes, only those are committed. If nothing is staged, all modified and untracked files are staged and committed automatically.
+
+**`/create-branch`** — no input needed, reads your uncommitted changes and creates a branch:
+
+```text
+/create-branch
+```
+
+> Created and switched to branch `feature/rate-limit-login`
+
+Branch type is inferred automatically: `feature/`, `fix/`, `chore/`, `docs/`, `refactor/`, or `ci/`.
 
 **`/create-pr-github`** — no input needed, reads your branch commits and opens a PR via `gh`:
 
