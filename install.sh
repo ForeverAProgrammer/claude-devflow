@@ -1,30 +1,22 @@
 #!/usr/bin/env bash
 set -e
 
-COMMANDS_DIR="$(cd "$(dirname "$0")/commands" && pwd)"
-TARGET_DIR="$HOME/.claude/commands"
+REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
+MARKETPLACE="devflow"
+PLUGIN="devflow"
 
-mkdir -p "$TARGET_DIR"
+if ! command -v claude >/dev/null 2>&1; then
+  echo "error: claude CLI not found." >&2
+  echo "Install it from https://docs.anthropic.com/en/docs/claude-code/setup" >&2
+  exit 1
+fi
 
-echo "Installing Claude commands from $COMMANDS_DIR → $TARGET_DIR"
+echo "Installing $PLUGIN from $REPO_DIR"
 echo ""
 
-for file in "$COMMANDS_DIR"/*.md; do
-  name=$(basename "$file")
-  target="$TARGET_DIR/$name"
-
-  if [ -L "$target" ]; then
-    echo "  updated  /$name (symlink already existed)"
-  elif [ -f "$target" ]; then
-    echo "  skipped  /$name (non-symlink file exists — remove it manually to install)"
-    continue
-  else
-    echo "  installed /$name"
-  fi
-
-  ln -sf "$file" "$target"
-done
+claude plugin marketplace add "$REPO_DIR"
+claude plugin install "$PLUGIN@$MARKETPLACE"
 
 echo ""
-echo "Done. Commands are available globally in Claude Code."
-echo "To uninstall, run: unlink ~/.claude/commands/<command>.md"
+echo "Done. Skills are available in Claude Code as /$MARKETPLACE:<skill-name>."
+echo "To uninstall, run: ./uninstall.sh"

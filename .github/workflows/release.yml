@@ -1,0 +1,141 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Skip release commits
+        id: guard
+        run: |
+          MSG=$(git log -1 --pretty=format:"%s")
+          if echo "$MSG" | grep -qE "^chore\(release\):"; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Get commits since last tag
+        if: steps.guard.outputs.skip == 'false'
+        id: commits
+        run: |
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -z "$LAST_TAG" ]; then
+            RANGE="HEAD"
+          else
+            RANGE="$LAST_TAG..HEAD"
+          fi
+          # Write commits to a temp file to avoid multiline quoting issues
+          git log "$RANGE" --pretty=format:"%s" > /tmp/commits.txt
+          echo "last_tag=$LAST_TAG" >> "$GITHUB_OUTPUT"
+          echo "range=$RANGE" >> "$GITHUB_OUTPUT"
+
+      - name: Determine bump type
+        if: steps.guard.outputs.skip == 'false'
+        id: bump
+        run: |
+          if grep -qE "^feat(\(.+\))?!:|^[a-z]+(\(.+\))?!:|BREAKING CHANGE" /tmp/commits.txt; then
+            echo "type=major" >> "$GITHUB_OUTPUT"
+          elif grep -qE "^feat(\(.+\))?:" /tmp/commits.txt; then
+            echo "type=minor" >> "$GITHUB_OUTPUT"
+          else
+            echo "type=patch" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Calculate new version
+        if: steps.guard.outputs.skip == 'false'
+        id: version
+        run: |
+          CURRENT=$(jq -r '.version' .claude-plugin/plugin.json)
+          MAJOR=$(echo "$CURRENT" | cut -d. -f1)
+          MINOR=$(echo "$CURRENT" | cut -d. -f2)
+          PATCH=$(echo "$CURRENT" | cut -d. -f3)
+          case "${{ steps.bump.outputs.type }}" in
+            major) MAJOR=$((MAJOR + 1)); MINOR=0; PATCH=0 ;;
+            minor) MINOR=$((MINOR + 1)); PATCH=0 ;;
+            patch) PATCH=$((PATCH + 1)) ;;
+          esac
+          NEW="$MAJOR.$MINOR.$PATCH"
+          echo "new=$NEW" >> "$GITHUB_OUTPUT"
+          echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
+
+      - name: Update plugin version files
+        if: steps.guard.outputs.skip == 'false'
+        run: |
+          V="${{ steps.version.outputs.new }}"
+          jq --arg v "$V" '.version = $v' .claude-plugin/plugin.json > /tmp/plugin.json \
+            && mv /tmp/plugin.json .claude-plugin/plugin.json
+          jq --arg v "$V" '.plugins[0].version = $v' .claude-plugin/marketplace.json > /tmp/marketplace.json \
+            && mv /tmp/marketplace.json .claude-plugin/marketplace.json
+
+      - name: Update CHANGELOG.md
+        if: steps.guard.outputs.skip == 'false'
+        run: |
+          V="${{ steps.version.outputs.new }}"
+          DATE=$(date -u +%Y-%m-%d)
+
+          # Build new section into a temp file
+          {
+            echo "## v$V ($DATE)"
+            echo ""
+
+            FEATURES=$(grep -E "^feat(\(.+\))?:" /tmp/commits.txt \
+              | sed -E 's/^feat(\([^)]+\))?:[[:space:]]*/- /' || true)
+            if [ -n "$FEATURES" ]; then
+              echo "### Features"
+              echo ""
+              echo "$FEATURES"
+              echo ""
+            fi
+
+            FIXES=$(grep -E "^fix(\(.+\))?:" /tmp/commits.txt \
+              | sed -E 's/^fix(\([^)]+\))?:[[:space:]]*/- /' || true)
+            if [ -n "$FIXES" ]; then
+              echo "### Bug Fixes"
+              echo ""
+              echo "$FIXES"
+              echo ""
+            fi
+
+            CHORES=$(grep -E "^(chore|ci|build|refactor|docs|test|perf)(\(.+\))?:" /tmp/commits.txt \
+              | sed -E 's/^[a-z]+(\([^)]+\))?:[[:space:]]*/- /' || true)
+            if [ -n "$CHORES" ]; then
+              echo "### Chores & Maintenance"
+              echo ""
+              echo "$CHORES"
+              echo ""
+            fi
+          } > /tmp/new_section.md
+
+          # Prepend after the first heading line
+          HEADING=$(head -1 CHANGELOG.md)
+          REST=$(tail -n +2 CHANGELOG.md)
+          {
+            echo "$HEADING"
+            echo ""
+            cat /tmp/new_section.md
+            echo "$REST"
+          } > /tmp/CHANGELOG.md
+          mv /tmp/CHANGELOG.md CHANGELOG.md
+
+      - name: Commit, tag, and push
+        if: steps.guard.outputs.skip == 'false'
+        run: |
+          V="${{ steps.version.outputs.new }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .claude-plugin/plugin.json .claude-plugin/marketplace.json CHANGELOG.md
+          git commit -m "chore(release): bump version to v$V"
+          git tag "v$V"
+          git push origin main --follow-tags

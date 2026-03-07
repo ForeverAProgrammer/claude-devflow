@@ -1,0 +1,22 @@
+{
+  "name": "devflow",
+  "owner": {
+    "name": "ForeverAProgrammer"
+  },
+  "metadata": {
+    "description": "A collection of slash commands for Claude Code — standup updates, commit messages, PR descriptions, HLDs, LLDs, GitHub automation, and more."
+  },
+  "plugins": [
+    {
+      "name": "devflow",
+      "source": "./",
+      "description": "Slash commands for common dev tasks: standups, commits, PRs, design docs, GitHub automation, and more.",
+      "version": "0.1.0",
+      "author": {
+        "name": "ForeverAProgrammer"
+      },
+      "homepage": "https://github.com/ForeverAProgrammer/claude-devflow",
+      "repository": "https://github.com/ForeverAProgrammer/claude-devflow"
+    }
+  ]
+}
