@@ -147,7 +147,7 @@ Automatically suggests the next semver version based on commit types. Bumps patc
 
 > `fix: resolve null pointer in checkout when cart is empty`
 
-If there are staged changes, only those are committed. If nothing is staged, all modified and untracked files are staged and committed automatically.
+If there are staged changes, only those are committed. If nothing is staged, all modified and untracked files are staged and committed automatically. If a `CHANGELOG.md` exists in the repo root, it is updated and included in the same commit automatically.
 
 **`/create-branch`** — no input needed, reads your uncommitted changes and creates a branch:
 
