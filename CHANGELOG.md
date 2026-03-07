@@ -4,6 +4,9 @@
 
 ### Features
 
+- Added `/tag-release-ansible` command to bump version in `galaxy.yml` or `meta/main.yml`, tag, and push for Ansible Galaxy collections and roles (this commit)
+- Added `/tag-release-npm` command to bump `package.json` version via `npm version`, commit, tag, and push for npm projects (this commit)
+- Added `/tag-release` command to suggest and apply the next semver tag based on commits since the last tag, with CI/CD guidance (this commit)
 - Added `/changelog` command that creates and maintains `CHANGELOG.md` across all releases, with permanent tagged sections and an auto-updated Unreleased section (3309bf1)
 - Added `/create-branch` command to automatically name and create branches from uncommitted changes, inferring type prefix and slug from the diff (18b23ad)
 - Added `/create-pr-github` command to push the current branch and open or update a GitHub PR via `gh` (76e6eb3)

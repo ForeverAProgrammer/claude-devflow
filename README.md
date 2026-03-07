@@ -34,6 +34,9 @@ cd claude-commands && git pull
 | `/commit` | Generate a conventional commit message from current branch changes |
 | `/create-branch` | Create a branch named to match the current uncommitted changes |
 | `/create-pr-github` | Create a GitHub PR from the current branch using `gh` |
+| `/tag-release` | Suggest and apply the next semver tag based on commits since the last tag |
+| `/tag-release-npm` | Bump `package.json` version, tag, and push for npm projects |
+| `/tag-release-ansible` | Bump version in `galaxy.yml` or `meta/main.yml`, tag, and push for Ansible Galaxy projects |
 
 ## Usage
 
@@ -174,6 +177,55 @@ Branch type is inferred automatically: `feature/`, `fix/`, `chore/`, `docs/`, `r
 Creates a new PR if one doesn't exist for the branch, or updates the title and description of the existing PR if one does. Pushes the branch to the remote automatically if it hasn't been pushed yet. Pass extra `gh` flags as arguments if needed (e.g. `/create-pr-github --draft --base staging`).
 
 Requires the [GitHub CLI](https://cli.github.com/) (`gh`) to be installed and authenticated.
+
+**`/tag-release`** — no input needed, inspects commits and proposes the next version:
+
+```text
+/tag-release
+```
+
+> Proposed tag: `v0.2.0` (minor bump — new features since `v0.1.0`)
+>
+> Commits included:
+>
+> - feat(sync): add sync command to rebase branch onto default branch
+> - feat(create-branch): add command to auto-name branches
+>
+> Confirm? (yes/no)
+
+Asks for confirmation before creating and pushing the tag. For repos with a CI/CD pipeline, automated tagging on merge to the default branch is preferred over running this manually.
+
+**`/tag-release-npm`** — for npm projects, bumps `package.json`, commits, tags, and pushes:
+
+```text
+/tag-release-npm
+```
+
+> Current version: `1.0.0` → Proposed: `1.1.0` (minor bump — new features)
+>
+> Commits included:
+>
+> - feat(sync): add sync command to rebase branch onto default branch
+>
+> Confirm? (yes/no)
+
+Runs `npm version` to update `package.json` and `package-lock.json`, commits the bump, creates the git tag, and pushes both. Also updates `CHANGELOG.md` if one exists, converting the `## Unreleased` section into a versioned release section. For repos with a CI/CD pipeline, automated versioning is preferred over running this manually.
+
+**`/tag-release-ansible`** — for Ansible Galaxy collections and roles, bumps the version, tags, and pushes:
+
+```text
+/tag-release-ansible
+```
+
+> Current version: `1.0.0` → Proposed: `1.1.0` (minor bump — new features)
+>
+> Commits included:
+>
+> - feat: add new role defaults for TLS configuration
+>
+> Confirm? (yes/no)
+
+Works with both collections (`galaxy.yml`) and roles (`meta/main.yml`), detecting the project type automatically. Prints a reminder to trigger a Galaxy import if not using an automated webhook. For repos with a CI/CD pipeline, automated versioning is preferred over running this manually.
 
 ## Uninstall
 
