@@ -109,13 +109,15 @@ review the Q3 roadmap before Friday's planning session.
 > - [ ] @john — update the onboarding doc with new flow
 > - [ ] @all — review the Q3 roadmap before Friday
 
-**`/commit`** — no input needed, reads your git diff automatically:
+**`/commit`** — no input needed, commits immediately without asking for confirmation:
 
 ```text
 /commit
 ```
 
 > `fix: resolve null pointer in checkout when cart is empty`
+
+If there are staged changes, only those are committed. If nothing is staged, all modified and untracked files are staged and committed automatically.
 
 **`/create-pr-github`** — no input needed, reads your branch commits and opens a PR via `gh`:
 
@@ -129,7 +131,7 @@ review the Q3 roadmap before Friday's planning session.
 >
 > <https://github.com/your-org/your-repo/pull/42>
 
-Pass extra `gh` flags as arguments if needed (e.g. `/create-pr-github --draft --base staging`).
+Pushes the branch to the remote automatically if it hasn't been pushed yet. Pass extra `gh` flags as arguments if needed (e.g. `/create-pr-github --draft --base staging`).
 
 Requires the [GitHub CLI](https://cli.github.com/) (`gh`) to be installed and authenticated.
 
