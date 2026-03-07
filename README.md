@@ -14,6 +14,12 @@ cd claude-commands
 
 This symlinks all commands into `~/.claude/commands/`, making them available globally in every workspace. Because they're symlinks, pulling updates to this repo automatically updates your commands — no reinstall needed.
 
+To get the latest commands:
+
+```bash
+cd claude-commands && git pull
+```
+
 ## Commands
 
 | Command | Description |
@@ -24,6 +30,7 @@ This symlinks all commands into `~/.claude/commands/`, making them available glo
 | `/pr` | Generate a PR title and description from a summary or diff |
 | `/email` | Turn rough notes into a polished professional email |
 | `/action-items` | Extract action items from meeting notes or a wall of text |
+| `/changelog` | Generate a changelog from commits since the last git tag |
 | `/commit` | Generate a conventional commit message from current branch changes |
 | `/create-branch` | Create a branch named to match the current uncommitted changes |
 | `/create-pr-github` | Create a GitHub PR from the current branch using `gh` |
@@ -110,6 +117,28 @@ review the Q3 roadmap before Friday's planning session.
 > - [ ] @john — update the onboarding doc with new flow
 > - [ ] @all — review the Q3 roadmap before Friday
 
+**`/changelog`** — no input needed, reads commits since the last tag automatically:
+
+```text
+/changelog
+```
+
+> ## v1.1.0
+>
+> **Features**
+>
+> - Added `/create-branch` command to auto-name branches from uncommitted changes (a3f9c1)
+>
+> **Bug Fixes**
+>
+> - Resolved null pointer crash in checkout when cart is empty (b2e4d8)
+>
+> **Chores & Maintenance**
+>
+> - Updated `.gitignore` to exclude `settings.local.json` (c1a2b3)
+
+Automatically suggests the next semver version based on commit types. Bumps patch for fixes only, minor for any new feature, major if a breaking change is detected.
+
 **`/commit`** — no input needed, commits immediately without asking for confirmation:
 
 ```text
@@ -118,7 +147,7 @@ review the Q3 roadmap before Friday's planning session.
 
 > `fix: resolve null pointer in checkout when cart is empty`
 
-If there are staged changes, only those are committed. If nothing is staged, all modified and untracked files are staged and committed automatically.
+If there are staged changes, only those are committed. If nothing is staged, all modified and untracked files are staged and committed automatically. If a `CHANGELOG.md` exists in the repo root, it is updated and included in the same commit automatically.
 
 **`/create-branch`** — no input needed, reads your uncommitted changes and creates a branch:
 
