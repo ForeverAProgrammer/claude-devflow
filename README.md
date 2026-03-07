@@ -41,6 +41,7 @@ cd claude-commands && git pull
 | `/create-pr-github` | Create a GitHub PR from the current branch using a text description |
 | `/create-pr-github-git` | Create a GitHub PR from the current branch, deriving title and description from git history |
 | `/fix-issue-github` | Read a GitHub issue and apply code changes to resolve it |
+| `/fix-issue-github-auto` | Fully automate resolving a GitHub issue: branch, fix, commit, PR, and resolve conflicts |
 | `/resolve-conflicts` | Rebase the current branch onto the PR target branch and resolve conflicts |
 | `/review` | Review code or a diff and give structured feedback with severity levels |
 | `/sync` | Fetch and rebase the current branch onto the default branch |
@@ -324,6 +325,16 @@ Requires the [GitHub CLI](https://cli.github.com/) (`gh`) to be installed and au
 ```
 
 Reads the issue title, body, and comments from GitHub, explores the relevant parts of the codebase, and applies the minimum changes needed to resolve it. Follows existing code conventions — no unrelated refactoring, extra comments, or unnecessary changes. Summarises what was changed and why before stopping, leaving commit and push to you.
+
+Requires the [GitHub CLI](https://cli.github.com/) (`gh`) to be installed and authenticated.
+
+**`/fix-issue-github-auto`** — pass an issue number to fully automate the end-to-end fix:
+
+```text
+/fix-issue-github-auto 42
+```
+
+Runs the full workflow in sequence: creates a branch linked to the issue, reads the issue and applies code changes, commits with a conventional commit message, opens a PR with `Closes #42` in the body, and checks for merge conflicts — rebasing and resolving them automatically if found. Requires no further input unless a conflict is too ambiguous to resolve safely.
 
 Requires the [GitHub CLI](https://cli.github.com/) (`gh`) to be installed and authenticated.
 
