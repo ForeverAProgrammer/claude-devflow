@@ -34,6 +34,8 @@ cd claude-commands && git pull
 | `/commit` | Generate a conventional commit message from current branch changes |
 | `/create-branch` | Create a branch named to match the current uncommitted changes |
 | `/create-pr-github` | Create a GitHub PR from the current branch using `gh` |
+| `/resolve-conflicts` | Rebase the current branch onto the PR target branch and resolve conflicts |
+| `/review` | Review code or a diff and give structured feedback with severity levels |
 | `/tag-release` | Suggest and apply the next semver tag based on commits since the last tag |
 | `/tag-release-npm` | Bump `package.json` version, tag, and push for npm projects |
 | `/tag-release-ansible` | Bump version in `galaxy.yml` or `meta/main.yml`, tag, and push for Ansible Galaxy projects |
@@ -178,6 +180,7 @@ Creates a new PR if one doesn't exist for the branch, or updates the title and d
 
 Requires the [GitHub CLI](https://cli.github.com/) (`gh`) to be installed and authenticated.
 
+<<<<<<< HEAD
 **`/tag-release`** — no input needed, inspects commits and proposes the next version:
 
 ```text
@@ -226,6 +229,32 @@ Runs `npm version` to update `package.json` and `package-lock.json`, commits the
 > Confirm? (yes/no)
 
 Works with both collections (`galaxy.yml`) and roles (`meta/main.yml`), detecting the project type automatically. Prints a reminder to trigger a Galaxy import if not using an automated webhook. For repos with a CI/CD pipeline, automated versioning is preferred over running this manually.
+=======
+**`/review`** — no input reviews your uncommitted changes; pass a file path or paste code directly:
+
+```text
+/review
+```
+
+```text
+/review src/auth/login.js
+```
+
+> **Summary:** Adds rate limiting middleware to the login endpoint using Redis.
+>
+> **Issues**
+>
+> - [ ] [Security] User IP taken from `req.headers['x-forwarded-for']` without validation — can be spoofed; use a trusted proxy header or `req.socket.remoteAddress`
+> - [ ] [Bug] Redis client errors are silently swallowed — a Redis outage will fail open and bypass rate limiting entirely
+>
+> **Suggestions**
+>
+> - Extract the Redis key format (`ratelimit:${ip}`) into a named constant so it's easy to change
+>
+> **Looks good**
+>
+> - TTL is set atomically with the counter increment — no race condition
+>>>>>>> 30de5c1 (feat(review): add code review command with structured severity-based feedback)
 
 ## Uninstall
 
