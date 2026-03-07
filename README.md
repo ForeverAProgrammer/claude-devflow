@@ -32,6 +32,7 @@ cd claude-commands && git pull
 | `/action-items` | Extract action items from meeting notes or a wall of text |
 | `/decision` | Format a description into a structured Architecture Decision Record (ADR) |
 | `/hld` | Generate a High Level Design document from a freeform description and write it to a markdown file |
+| `/lld` | Generate a Low Level Design document from a freeform description and write it to a markdown file |
 | `/jira-ticket` | Turn a rough description into a well-formed Jira/Linear-style ticket with acceptance criteria |
 | `/jira-ticket-git` | Generate a Jira/Linear-style ticket from the current git changes or last commit |
 | `/changelog` | Generate a changelog from commits since the last git tag |
@@ -175,6 +176,20 @@ review the Q3 roadmap before Friday's planning session.
 > Written to `hld-user-authentication-service-jwt.md`
 >
 > Sections populated: Overview, Goals, Non-Goals, System Context, Proposed Design, Components, Data Flow, Alternatives Considered
+>
+> Stubs (fill in before sharing): Open Questions
+
+The filename is derived from the description slug automatically. Sections that cannot be inferred from the description are included as stubs with a prompt to fill in.
+
+**`/lld`** — pass a description to generate a Low Level Design document:
+
+```text
+/lld user authentication service with JWT tokens and refresh token rotation
+```
+
+> Written to `lld-user-authentication-service-jwt.md`
+>
+> Sections populated: Overview, Scope, API / Interface Design, Data Models, Component Interactions, Error Handling, Edge Cases, Testing Considerations
 >
 > Stubs (fill in before sharing): Open Questions
 
