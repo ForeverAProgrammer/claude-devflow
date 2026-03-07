@@ -30,6 +30,7 @@ cd claude-commands && git pull
 | `/pr` | Generate a PR title and description from a summary or diff |
 | `/email` | Turn rough notes into a polished professional email |
 | `/action-items` | Extract action items from meeting notes or a wall of text |
+| `/decision` | Format a description into a structured Architecture Decision Record (ADR) |
 | `/jira-ticket` | Turn a rough description into a well-formed Jira/Linear-style ticket with acceptance criteria |
 | `/jira-ticket-git` | Generate a Jira/Linear-style ticket from the current git changes or last commit |
 | `/changelog` | Generate a changelog from commits since the last git tag |
@@ -124,6 +125,43 @@ review the Q3 roadmap before Friday's planning session.
 > - [ ] @sara — follow up with infra team on API keys
 > - [ ] @john — update the onboarding doc with new flow
 > - [ ] @all — review the Q3 roadmap before Friday
+
+**`/decision`** — paste a rough description of the decision to get a formatted ADR:
+
+```text
+/decision we chose PostgreSQL over MongoDB for the new reporting service because our data is relational and we needed strong consistency
+```
+
+> ## Decision: Use PostgreSQL for the reporting service
+>
+> **Date:** 2026-03-06
+>
+> **Status:** Proposed
+>
+> ### Context
+>
+> The new reporting service needs a primary datastore. The data being stored is relational in nature (reports reference users, projects, and time periods with foreign-key relationships), and the queries require aggregations across multiple entities with strong consistency guarantees.
+>
+> ### Options Considered
+>
+> - **PostgreSQL** — mature relational database with strong consistency, rich query language, and native support for aggregations; requires a defined schema upfront
+> - **MongoDB** — flexible document store suited to evolving schemas; weaker consistency guarantees and less natural fit for relational queries
+>
+> ### Decision
+>
+> PostgreSQL was chosen because the reporting data model is inherently relational and the query patterns (cross-entity aggregations, joins) map directly to SQL. MongoDB's flexibility is not needed here, and its eventual consistency model would complicate report accuracy.
+>
+> ### Consequences
+>
+> **Positive:**
+>
+> - Strong consistency guarantees mean reports are always accurate at query time
+> - SQL aggregations are expressive and well-supported by reporting tooling
+>
+> **Drawbacks / risks:**
+>
+> - Schema changes require migrations, which adds overhead when the data model evolves
+> - Vertical scaling limits apply; sharding would be complex if write volume grows significantly
 
 **`/jira-ticket`** — paste a rough description to get a structured ticket:
 
