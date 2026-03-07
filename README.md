@@ -35,6 +35,7 @@ cd claude-commands && git pull
 | `/changelog` | Generate a changelog from commits since the last git tag |
 | `/commit` | Generate a conventional commit message from current branch changes |
 | `/create-branch` | Create a branch named to match the current uncommitted changes |
+| `/create-issue-branch-github` | Create a branch linked to a GitHub issue and check it out locally |
 | `/create-issue-github` | Create a GitHub issue from a text description |
 | `/create-pr-github` | Create a GitHub PR from the current branch using a text description |
 | `/create-pr-github-git` | Create a GitHub PR from the current branch, deriving title and description from git history |
@@ -210,6 +211,20 @@ If there are staged changes, only those are committed. If nothing is staged, all
 > Created and switched to branch `feature/rate-limit-login`
 
 Branch type is inferred automatically: `feature/`, `fix/`, `chore/`, `docs/`, `refactor/`, or `ci/`.
+
+**`/create-issue-branch-github`** — pass an issue number to create a linked branch and check it out:
+
+```text
+/create-issue-branch-github 12
+```
+
+> Created and switched to branch `12-add-decision-command`
+>
+> Branch is linked to issue #12. When you open a PR from this branch, GitHub will automatically show it in the issue's Development sidebar.
+
+Branch name is generated from the issue number and title automatically. Pass `--name <branch>` to override (e.g. `/create-issue-branch-github 12 --name feature/decision-command`).
+
+Requires the [GitHub CLI](https://cli.github.com/) (`gh`) to be installed and authenticated.
 
 **`/create-issue-github`** — pass a description and it opens a GitHub issue via `gh`:
 
