@@ -18,6 +18,7 @@
 - Added `/create-issue-github` command to create a GitHub issue from a freeform description, with automatic label inference (b536165)
 - Added `/decision` command to format a freeform description into a structured Architecture Decision Record with Context, Options, Decision, and Consequences sections (5a02c10)
 - Added `/create-issue-branch-github` command to create a branch linked to a GitHub issue, with fallback for older gh versions that lack `gh issue develop` (5a02c10)
+- Added `/fix-issue-github` command to read a GitHub issue and apply the minimum code changes needed to resolve it (393eff8)
 - Added `/create-pr-github-git` command to push the current branch and open or update a GitHub PR, deriving title and description from git history (425cc56)
 - Updated `/create-pr-github` to take a freeform text description as input instead of reading git history (this commit)
 - Updated `/commit` to apply immediately without confirmation, stage all files when nothing is staged, and update `CHANGELOG.md` before committing if one exists (b2a4e0f)

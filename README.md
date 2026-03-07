@@ -40,6 +40,7 @@ cd claude-commands && git pull
 | `/create-issue-github` | Create a GitHub issue from a text description |
 | `/create-pr-github` | Create a GitHub PR from the current branch using a text description |
 | `/create-pr-github-git` | Create a GitHub PR from the current branch, deriving title and description from git history |
+| `/fix-issue-github` | Read a GitHub issue and apply code changes to resolve it |
 | `/resolve-conflicts` | Rebase the current branch onto the PR target branch and resolve conflicts |
 | `/review` | Review code or a diff and give structured feedback with severity levels |
 | `/sync` | Fetch and rebase the current branch onto the default branch |
@@ -313,6 +314,16 @@ Requires the [GitHub CLI](https://cli.github.com/) (`gh`) to be installed and au
 > <https://github.com/your-org/your-repo/pull/42>
 
 Derives title and description from all commits on the branch relative to the default branch. Creates a new PR if one doesn't exist, or updates the existing PR. Pushes the branch automatically if it hasn't been pushed yet. Pass extra `gh` flags as arguments (e.g. `/create-pr-github-git --draft --base staging`).
+
+Requires the [GitHub CLI](https://cli.github.com/) (`gh`) to be installed and authenticated.
+
+**`/fix-issue-github`** — pass an issue number to read and resolve it automatically:
+
+```text
+/fix-issue-github 42
+```
+
+Reads the issue title, body, and comments from GitHub, explores the relevant parts of the codebase, and applies the minimum changes needed to resolve it. Follows existing code conventions — no unrelated refactoring, extra comments, or unnecessary changes. Summarises what was changed and why before stopping, leaving commit and push to you.
 
 Requires the [GitHub CLI](https://cli.github.com/) (`gh`) to be installed and authenticated.
 
