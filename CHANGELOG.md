@@ -5,6 +5,7 @@
 ### Features
 
 - Added `/sync` command to fetch and rebase the current branch onto the default branch, with automatic default branch detection and conflict reporting (e3682b3)
+- Updated `/resolve-conflicts` to fall back to `git remote show origin` and common branch name detection when `gh` is not available, so it works on any git host (eb0c809)
 - Added `/resolve-conflicts` command to rebase the current branch onto the PR target branch and resolve conflicts automatically (99dd4d5)
 - Added `/review` command to give structured code feedback with severity levels, from uncommitted changes, a file, or pasted code (3e67667)
 - Added `/tag-release-ansible` command to bump version in `galaxy.yml` or `meta/main.yml`, tag, and push for Ansible Galaxy collections and roles (740369d)
@@ -18,6 +19,7 @@
 
 ### Documentation
 
+- Added GitHub-specific command naming convention and fallback rules to `CLAUDE.md` (this commit)
 - Updated README to note that `/commit` updates `CHANGELOG.md` automatically (00fcd6e)
 
 ### Chores & Maintenance
