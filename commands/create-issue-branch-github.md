@@ -5,7 +5,9 @@ $ARGUMENTS is the issue number. If $ARGUMENTS is empty, ask the user to provide 
 Steps:
 1. Check that `gh` is installed and authenticated by running `gh auth status`. If not, tell the user and stop.
 2. Run `gh issue view $ARGUMENTS --json title,state` to confirm the issue exists. If it doesn't exist or is already closed, tell the user and stop.
-3. Run `gh issue develop $ARGUMENTS --checkout` to create a branch linked to the issue and check it out locally.
-   - GitHub names the branch `<number>-<issue-title-slug>` automatically (e.g. `12-add-decision-command`).
-   - If the user passed a custom branch name via $ARGUMENTS (e.g. `/create-issue-branch-github 12 --name my-branch`), pass it through with `--name`.
-4. Tell the user the branch name and confirm they are now on it. Note that the branch is linked to the issue — when a PR is opened from this branch, GitHub will automatically show it in the issue's Development sidebar.
+3. Check if `gh issue develop` is available by running `gh issue develop --help 2>/dev/null`. Then:
+   - **If available:** Run `gh issue develop $ARGUMENTS --checkout`. Pass `--name <name>` if a custom name was provided in $ARGUMENTS. GitHub names the branch `<number>-<issue-title-slug>` automatically and links it to the issue.
+   - **If not available (older gh):** Derive the branch name from the issue number and title: lowercase the title, replace spaces and special characters with hyphens, truncate to ~5 words, and prefix with the issue number (e.g. `12-add-decision-command`). Run `git checkout -b <branch-name>`.
+4. Tell the user the branch name and confirm they are now on it.
+   - If `gh issue develop` was used: note that the branch is linked to the issue and will appear in the issue's Development sidebar automatically.
+   - If the fallback was used: note that `gh issue develop` requires gh v2.11+ and suggest upgrading. Advise adding `Closes #<number>` to the PR description to link the issue when opening a PR.
