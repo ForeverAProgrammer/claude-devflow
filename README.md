@@ -35,7 +35,8 @@ cd claude-commands && git pull
 | `/changelog` | Generate a changelog from commits since the last git tag |
 | `/commit` | Generate a conventional commit message from current branch changes |
 | `/create-branch` | Create a branch named to match the current uncommitted changes |
-| `/create-pr-github` | Create a GitHub PR from the current branch using `gh` |
+| `/create-pr-github` | Create a GitHub PR from the current branch using a text description |
+| `/create-pr-github-git` | Create a GitHub PR from the current branch, deriving title and description from git history |
 | `/resolve-conflicts` | Rebase the current branch onto the PR target branch and resolve conflicts |
 | `/review` | Review code or a diff and give structured feedback with severity levels |
 | `/sync` | Fetch and rebase the current branch onto the default branch |
@@ -209,10 +210,10 @@ If there are staged changes, only those are committed. If nothing is staged, all
 
 Branch type is inferred automatically: `feature/`, `fix/`, `chore/`, `docs/`, `refactor/`, or `ci/`.
 
-**`/create-pr-github`** — no input needed, reads your branch commits and opens a PR via `gh`:
+**`/create-pr-github`** — pass a description and it opens a PR via `gh`:
 
 ```text
-/create-pr-github
+/create-pr-github Added Redis-backed rate limiting to the login endpoint, 5 attempts per IP per minute
 ```
 
 > **Add rate limiting to login endpoint**
@@ -221,7 +222,23 @@ Branch type is inferred automatically: `feature/`, `fix/`, `chore/`, `docs/`, `r
 >
 > <https://github.com/your-org/your-repo/pull/42>
 
-Creates a new PR if one doesn't exist for the branch, or updates the title and description of the existing PR if one does. Pushes the branch to the remote automatically if it hasn't been pushed yet. Pass extra `gh` flags as arguments if needed (e.g. `/create-pr-github --draft --base staging`).
+Creates a new PR if one doesn't exist for the branch, or updates the title and description of the existing PR if one does. Pushes the branch to the remote automatically if it hasn't been pushed yet.
+
+Requires the [GitHub CLI](https://cli.github.com/) (`gh`) to be installed and authenticated.
+
+**`/create-pr-github-git`** — no input needed, reads your branch commits and opens a PR via `gh`:
+
+```text
+/create-pr-github-git
+```
+
+> **Add rate limiting to login endpoint**
+>
+> Adds Redis-backed rate limiting to the login endpoint, capping authentication attempts at 5 per IP per minute. Requests over the limit receive a 429 response.
+>
+> <https://github.com/your-org/your-repo/pull/42>
+
+Derives title and description from all commits on the branch relative to the default branch. Creates a new PR if one doesn't exist, or updates the existing PR. Pushes the branch automatically if it hasn't been pushed yet. Pass extra `gh` flags as arguments (e.g. `/create-pr-github-git --draft --base staging`).
 
 Requires the [GitHub CLI](https://cli.github.com/) (`gh`) to be installed and authenticated.
 
