@@ -196,6 +196,16 @@ Generate a Low Level Design document from a freeform description and write it to
 
 Pass `--hld <path>` to generate the LLD from an existing HLD file. The HLD content is used as the primary source of context, with the Overview section linking back to it. The filename is derived from the description or HLD title slug automatically. Sections that cannot be inferred are included as stubs with a prompt to fill in.
 
+### `/implement-lld`
+
+Read a Low Level Design document and apply the code changes it describes to the codebase.
+
+```text
+/implement-lld design/lld-user-auth-service.md
+```
+
+Reads the LLD's Scope, API / Interface Design, Data Models, Component Interactions, Error Handling, and Edge Cases sections and applies the minimum code changes needed to implement them. Follows existing code conventions — no unrelated refactoring, extra comments, or unnecessary changes. Stub sections (marked `_TODO:_`) are skipped and listed in the summary. Summarises what was changed and why before stopping, leaving commit and push to you.
+
 ### `/jira-ticket`
 
 Turn a rough description into a well-formed Jira/Linear-style ticket with acceptance criteria.
