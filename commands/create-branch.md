@@ -1,7 +1,10 @@
 Create and checkout a git branch named to match the current uncommitted changes.
 
 Steps:
-1. Run `git diff HEAD --stat` and `git status --short` to see what has changed. If there are no uncommitted changes, tell the user and stop.
+1. Run `git diff --staged --stat` to check for staged changes.
+   - If there are staged files, run `git diff --staged` to see what will be in the branch.
+   - If nothing is staged, run `git diff HEAD --stat` and `git status --short` to see all uncommitted changes.
+   - If there are no staged or uncommitted changes at all, tell the user and stop.
 2. Infer the branch type and a short slug from the changes:
    - Use `feature/` for new functionality
    - Use `fix/` for bug fixes or error corrections
