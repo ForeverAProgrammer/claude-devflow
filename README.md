@@ -35,6 +35,7 @@ cd claude-commands && git pull
 | `/changelog` | Generate a changelog from commits since the last git tag |
 | `/commit` | Generate a conventional commit message from current branch changes |
 | `/create-branch` | Create a branch named to match the current uncommitted changes |
+| `/create-issue-github` | Create a GitHub issue from a text description |
 | `/create-pr-github` | Create a GitHub PR from the current branch using a text description |
 | `/create-pr-github-git` | Create a GitHub PR from the current branch, deriving title and description from git history |
 | `/resolve-conflicts` | Rebase the current branch onto the PR target branch and resolve conflicts |
@@ -209,6 +210,26 @@ If there are staged changes, only those are committed. If nothing is staged, all
 > Created and switched to branch `feature/rate-limit-login`
 
 Branch type is inferred automatically: `feature/`, `fix/`, `chore/`, `docs/`, `refactor/`, or `ci/`.
+
+**`/create-issue-github`** — pass a description and it opens a GitHub issue via `gh`:
+
+```text
+/create-issue-github login fails with a 500 error when the email contains a + sign
+```
+
+> **Fix login failure for email addresses containing + sign**
+>
+> Attempting to log in with an email address that contains a `+` character (e.g. `user+tag@example.com`) results in a 500 Internal Server Error. The email is likely not being URL-encoded before being passed to the auth service.
+>
+> **Steps to reproduce**
+>
+> 1. Navigate to the login page
+> 2. Enter an email containing `+` and any valid password
+> 3. Observe 500 error
+>
+> <https://github.com/your-org/your-repo/issues/7>
+
+Automatically infers a label (`bug`, `enhancement`, or `documentation`) from the description when one clearly applies. Requires the [GitHub CLI](https://cli.github.com/) (`gh`) to be installed and authenticated.
 
 **`/create-pr-github`** — pass a description and it opens a PR via `gh`:
 
