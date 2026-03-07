@@ -4,6 +4,7 @@
 
 ### Features
 
+- Added `/hld` command to generate a structured High Level Design document from a freeform description and write it to a markdown file (this commit)
 - Added `/jira-ticket` command to turn a rough description into a Jira/Linear-style ticket with title, type, description, and acceptance criteria (this commit)
 - Added `/jira-ticket-git` command to generate a ticket from all commits on the current branch compared to the default branch (this commit)
 - Added `/sync` command to fetch and rebase the current branch onto the default branch, with automatic default branch detection and conflict reporting (e3682b3)
