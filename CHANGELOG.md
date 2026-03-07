@@ -4,7 +4,8 @@
 
 ### Features
 
-- Added `/review` command to give structured code feedback with severity levels, from uncommitted changes, a file, or pasted code (this commit)
+- Added `/resolve-conflicts` command to rebase the current branch onto the PR target branch and resolve conflicts automatically (this commit)
+- Added `/review` command to give structured code feedback with severity levels, from uncommitted changes, a file, or pasted code (3e67667)
 - Added `/tag-release-ansible` command to bump version in `galaxy.yml` or `meta/main.yml`, tag, and push for Ansible Galaxy collections and roles (740369d)
 - Added `/tag-release-npm` command to bump `package.json` version via `npm version`, commit, tag, and push for npm projects (740369d)
 - Added `/tag-release` command to suggest and apply the next semver tag based on commits since the last tag, with CI/CD guidance (740369d)
