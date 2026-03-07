@@ -16,4 +16,6 @@ Then write a commit message following these rules:
 
 Apply the commit immediately with `git commit -m "..."`. Show the commit message and the output of `git commit` so the user can see what was committed. Do not ask for confirmation first.
 
+After committing, run `ls CHANGELOG.md 2>/dev/null` to check if a changelog file exists in the repo root. If it does, regenerate the changelog using the same rules as the `/changelog` command and overwrite `CHANGELOG.md` with the result.
+
 $ARGUMENTS
