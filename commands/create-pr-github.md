@@ -14,8 +14,9 @@ Steps:
    - Why it was needed if inferrable
    - Notable implementation details as bullet points (optional)
    - No filler like "This PR..." or vague words without specifics
-7. Run `gh pr create --title "<title>" --body "<description>"` to open the PR.
-   - If the user provided extra flags or a base branch override in $ARGUMENTS, append them.
-8. Print the PR URL returned by `gh`.
+7. Check if a PR already exists for this branch: `gh pr view --json url,number 2>/dev/null`.
+   - If no PR exists, run `gh pr create --title "<title>" --body "<description>"` to open one. Append any user-provided flags from $ARGUMENTS.
+   - If a PR already exists, run `gh pr edit --title "<title>" --body "<description>"` to update it.
+8. Print the PR URL.
 
 $ARGUMENTS

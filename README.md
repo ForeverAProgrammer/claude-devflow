@@ -131,7 +131,7 @@ If there are staged changes, only those are committed. If nothing is staged, all
 >
 > <https://github.com/your-org/your-repo/pull/42>
 
-Pushes the branch to the remote automatically if it hasn't been pushed yet. Pass extra `gh` flags as arguments if needed (e.g. `/create-pr-github --draft --base staging`).
+Creates a new PR if one doesn't exist for the branch, or updates the title and description of the existing PR if one does. Pushes the branch to the remote automatically if it hasn't been pushed yet. Pass extra `gh` flags as arguments if needed (e.g. `/create-pr-github --draft --base staging`).
 
 Requires the [GitHub CLI](https://cli.github.com/) (`gh`) to be installed and authenticated.
 
