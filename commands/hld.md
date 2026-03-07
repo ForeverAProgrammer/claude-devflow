@@ -24,9 +24,9 @@ Steps:
    - `## Alternatives Considered` — each alternative as a bullet with 1-2 sentences on the trade-off that led to it being rejected.
    - `## Open Questions` — unchecked checkboxes for questions that need answers before implementation begins.
 
-1. Write the document to `<slug>.md` in the current working directory.
+1. Create a `design/` directory in the current working directory if it does not already exist. Write the document to `design/<slug>.md`.
 
-1. Tell the user the filename and confirm it was written. List any sections that were left as stubs.
+1. Tell the user the file path (`design/<slug>.md`) and confirm it was written. List any sections that were left as stubs.
 
 Rules:
 

@@ -4,6 +4,9 @@
 
 ### Features
 
+- Updated `/lld` command to support `--hld <path>` flag for generating an LLD from an existing HLD file, with automatic back-link in the Overview section (this commit)
+- Updated `/lld` and `/hld` commands to output to a `design/` subfolder, creating it if it does not exist (this commit)
+- Updated README to add table of contents, restructure Commands section into per-command subsections, and merge Usage section into Commands (this commit)
 - Added `/lld` command to generate a structured Low Level Design document from a freeform description and write it to a markdown file (this commit)
 - Added `/hld` command to generate a structured High Level Design document from a freeform description and write it to a markdown file (this commit)
 - Added `/jira-ticket` command to turn a rough description into a Jira/Linear-style ticket with title, type, description, and acceptance criteria (this commit)
