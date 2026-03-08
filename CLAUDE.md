@@ -24,7 +24,7 @@ Any time a skill is added, removed, or its behaviour changes, you must:
 
 1. Update the commands table in `README.md`
 2. Update or add the usage example for that skill in `README.md`
-3. Check whether `install.sh` or `uninstall.sh` need changes (they currently handle all `skills/*/` directories automatically, so updates are only needed if the install logic itself changes)
+3. No install script changes needed — the plugin is installed via `claude plugin` CLI commands documented in `README.md`
 
 ## Releases
 

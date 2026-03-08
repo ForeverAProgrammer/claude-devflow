@@ -9,22 +9,24 @@ A collection of slash commands for the [Claude Code](https://github.com/anthropi
 - [Uninstall](#uninstall)
 - [Adding Commands](#adding-commands)
 
-> **Platform support:** Linux and macOS only. The install script uses bash — Windows paths and tooling are not compatible.
-
 ## Install
+
+Clone the repo, then run these two commands from inside it (works on Windows, macOS, and Linux):
 
 ```bash
 git clone https://github.com/ForeverAProgrammer/claude-devflow
 cd claude-devflow
-./install.sh
+claude plugin marketplace add ./
+claude plugin install devflow@devflow
 ```
 
-This registers the repo as a Claude marketplace and installs the `devflow` plugin. Skills are available as `/devflow:<skill-name>` (e.g. `/devflow:commit`).
+Skills are available as `/devflow:<skill-name>` (e.g. `/devflow:commit`).
 
 To update to the latest skills:
 
 ```bash
-cd claude-devflow && git pull && ./install.sh
+cd claude-devflow && git pull
+claude plugin marketplace update devflow
 ```
 
 ### Try without installing
@@ -463,14 +465,13 @@ The default branch is detected automatically via `gh`. If that fails, it checks 
 ## Uninstall
 
 ```bash
-./uninstall.sh
+claude plugin uninstall devflow@devflow
+claude plugin marketplace remove devflow
 ```
-
-Uninstalls the `devflow` plugin and removes the marketplace registration.
 
 ## Adding Commands
 
-Create a new directory under `skills/` and add a `SKILL.md` file, then run `./install.sh` again.
+Create a new directory under `skills/` and add a `SKILL.md` file. No reinstall needed — Claude picks up new skills automatically after a `/reload-plugins`.
 
 Every `SKILL.md` needs YAML frontmatter followed by the prompt body:
 

@@ -11,8 +11,7 @@
 
 ### Chores & Maintenance
 
-- Rewrote `install.sh` to use `claude plugin marketplace add` and `claude plugin install` instead of symlinks
-- Rewrote `uninstall.sh` to use `claude plugin uninstall` and `claude plugin marketplace remove`
+- Removed `install.sh` and `uninstall.sh`; replaced with plain `claude plugin` CLI commands documented in README (cross-platform)
 - Updated `README.md` to reflect plugin install flow and new skill namespace
 - Updated `CLAUDE.md` to document skills format, frontmatter fields, and release workflow
 
