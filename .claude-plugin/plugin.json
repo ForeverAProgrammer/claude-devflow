@@ -1,7 +1,7 @@
 {
   "name": "devflow",
   "description": "A collection of slash commands for Claude Code — standup updates, commit messages, PR descriptions, HLDs, LLDs, GitHub automation, and more.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": {
     "name": "ForeverAProgrammer",
     "url": "https://github.com/ForeverAProgrammer/claude-devflow"

@@ -1,5 +1,36 @@
 # Changelog
 
+## v0.2.0 (2026-03-08)
+
+### Features
+
+- migrate commands to Claude plugin skills and rename to devflow (#24)
+- add command to apply code changes from an LLD (#23)
+- add /lld command and improve README (#21)
+- add /hld command to generate High Level Design documents (#19)
+- add end-to-end command to resolve GitHub issues (#18)
+- add command to apply code changes from a GitHub issue (#17)
+- add command to create issue-linked branches (#15)
+- add command to create issue-linked branches (#14)
+- add command to create GitHub issues from text input (#13)
+- split into text-input and git-history variants (#11)
+- add jira-ticket and jira-ticket-git commands (#10)
+- add sync command to rebase branch onto default branch (#5)
+- add command to rebase branch and resolve PR conflicts (#8)
+- add code review command with structured severity-based feedback (#7)
+- add tag-release, tag-release-npm, and tag-release-ansible commands (#6)
+- use staged files for branch naming, fall back to all changes (#3)
+- add command to auto-name and create branches from uncommitted changes (#2)
+- update existing PR instead of failing if one exists
+- improve commit and create-pr-github reliability
+
+### Chores & Maintenance
+
+- document github-specific command naming and add resolve-conflicts fallbacks (#9)
+- add commit and create-pr-github commands, update gitignore
+- initial commit
+
+
 ## Unreleased
 
 ### Features
