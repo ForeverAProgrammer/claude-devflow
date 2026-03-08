@@ -1,4 +1,4 @@
-# Claude Code Commands
+# Claude Devflow
 
 A collection of slash commands for the [Claude Code](https://github.com/anthropics/claude-code) VS Code extension.
 
@@ -9,22 +9,32 @@ A collection of slash commands for the [Claude Code](https://github.com/anthropi
 - [Uninstall](#uninstall)
 - [Adding Commands](#adding-commands)
 
-> **Platform support:** Linux and macOS only. The install script uses bash and symlinks — Windows paths and tooling are not compatible.
-
 ## Install
 
+Clone the repo, then run these two commands from inside it (works on Windows, macOS, and Linux):
+
 ```bash
-git clone https://github.com/ForeverAProgrammer/claude-commands
-cd claude-commands
-./install.sh
+git clone https://github.com/ForeverAProgrammer/claude-devflow
+cd claude-devflow
+claude plugin marketplace add ./
+claude plugin install devflow@devflow
 ```
 
-This symlinks all commands into `~/.claude/commands/`, making them available globally in every workspace. Because they're symlinks, pulling updates to this repo automatically updates your commands — no reinstall needed.
+Skills are available as `/devflow:<skill-name>` (e.g. `/devflow:commit`).
 
-To get the latest commands:
+To update to the latest skills:
 
 ```bash
-cd claude-commands && git pull
+cd claude-devflow && git pull
+claude plugin marketplace update devflow
+```
+
+### Try without installing
+
+To test the plugin in a single session without installing:
+
+```bash
+claude --plugin-dir ./claude-devflow
 ```
 
 ## Commands
@@ -455,11 +465,24 @@ The default branch is detected automatically via `gh`. If that fails, it checks 
 ## Uninstall
 
 ```bash
-./uninstall.sh
+claude plugin uninstall devflow@devflow
+claude plugin marketplace remove devflow
 ```
-
-Only removes symlinks created by `install.sh` — any commands you added manually are left untouched.
 
 ## Adding Commands
 
-Add a new `.md` file to `commands/` and run `./install.sh` again. Use `$ARGUMENTS` as the placeholder for user input.
+Create a new directory under `skills/` and add a `SKILL.md` file. No reinstall needed — Claude picks up new skills automatically after a `/reload-plugins`.
+
+Every `SKILL.md` needs YAML frontmatter followed by the prompt body:
+
+```markdown
+---
+description: What this skill does and when to use it.
+argument-hint: "[description]"
+disable-model-invocation: true
+---
+
+Your skill instructions here. Use $ARGUMENTS as the placeholder for user input.
+```
+
+Set `disable-model-invocation: true` for skills with side effects (git operations, file writes, API calls).

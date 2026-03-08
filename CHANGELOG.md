@@ -1,6 +1,21 @@
 # Changelog
 
-## Unreleased (v0.1.0)
+## Unreleased
+
+### Features
+
+- Converted all commands to Claude plugin skills format with YAML frontmatter under `skills/<name>/SKILL.md`
+- Added `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` to make the repo a distributable Claude plugin marketplace
+- Renamed plugin to `devflow`; skills now available as `/devflow:<skill-name>`
+- Added `.github/workflows/release.yml` to auto-bump semver and update CHANGELOG on every merge to main
+
+### Chores & Maintenance
+
+- Removed `install.sh` and `uninstall.sh`; replaced with plain `claude plugin` CLI commands documented in README (cross-platform)
+- Updated `README.md` to reflect plugin install flow and new skill namespace
+- Updated `CLAUDE.md` to document skills format, frontmatter fields, and release workflow
+
+## v0.1.0
 
 ### Features
 
