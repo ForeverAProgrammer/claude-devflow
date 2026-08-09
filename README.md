@@ -387,6 +387,24 @@ Derives title and description from all commits on the branch relative to the def
 
 Requires the [GitHub CLI](https://cli.github.com/) (`gh`) to be installed and authenticated.
 
+### `/create-mr-gitlab-git`
+
+Create a GitLab MR from the current branch, deriving title and description from git history. No input needed.
+
+```text
+/create-mr-gitlab-git
+```
+
+> **Add rate limiting to login endpoint**
+>
+> Adds Redis-backed rate limiting to the login endpoint, capping authentication attempts at 5 per IP per minute. Requests over the limit receive a 429 response.
+>
+> <https://gitlab.com/your-org/your-repo/-/merge_requests/42>
+
+Derives title and description from all commits on the branch relative to the branch it was created from, not the repo's default branch — so a feature branch off a release branch gets diffed against that release branch. If multiple branches tie for closest ancestor (e.g. several release branches diverged at the same point), you'll be asked which one to target. Pass `--target-branch <name>` to skip detection and target a specific branch directly. If the repo has a GitLab MR description template (`.gitlab/merge_request_templates/Default.md` or another file in that directory), the description follows its structure instead of the default freeform format. Creates a new MR if one doesn't exist, or updates the existing MR. Pushes the branch automatically if it hasn't been pushed yet. Pass extra `glab` flags as arguments (e.g. `/create-mr-gitlab-git --draft --target-branch staging`).
+
+Requires the [GitLab CLI](https://gitlab.com/gitlab-org/cli) (`glab`) to be installed and authenticated.
+
 ### `/fix-issue-github`
 
 Read a GitHub issue and apply code changes to resolve it.
