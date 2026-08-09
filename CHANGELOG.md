@@ -30,21 +30,13 @@
 - add commit and create-pr-github commands, update gitignore
 - initial commit
 
-
-## Unreleased
+## Unreleased (minor)
 
 ### Features
 
-- Converted all commands to Claude plugin skills format with YAML frontmatter under `skills/<name>/SKILL.md`
-- Added `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` to make the repo a distributable Claude plugin marketplace
-- Renamed plugin to `devflow`; skills now available as `/devflow:<skill-name>`
-- Added `.github/workflows/release.yml` to auto-bump semver and update CHANGELOG on every merge to main
-
-### Chores & Maintenance
-
-- Removed `install.sh` and `uninstall.sh`; replaced with plain `claude plugin` CLI commands documented in README (cross-platform)
-- Updated `README.md` to reflect plugin install flow and new skill namespace
-- Updated `CLAUDE.md` to document skills format, frontmatter fields, and release workflow
+- Added `/create-mr-gitlab-git` skill to create or update a GitLab merge request from the current branch, deriving the title and description from git history
+- MR description follows the repo's GitLab MR template (`.gitlab/merge_request_templates/`) when one exists, instead of a fixed freeform format
+- Target branch is detected as the branch the feature branch was actually created from rather than always defaulting to the repo's default branch, prompting when multiple branches tie as closest ancestor, with an explicit `--target-branch` override available
 
 ## v0.1.0
 
