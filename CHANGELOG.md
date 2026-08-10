@@ -1,5 +1,19 @@
 # Changelog
 
+## Unreleased (minor)
+
+### Features
+
+- Added Living Mode (`--mode living|strict`) to `/hld` and `/lld`, tagging genuinely uncertain design detail inline with `[PENDING SPIKE VALIDATION]` instead of inventing it (this commit)
+- Added a `## Requirements` checklist to `/hld` and `/lld` output, with permanent sequential IDs and lifecycle rules for changed, descoped, and new requirements (this commit)
+- Added `--amend` flag to `/hld` and `/lld` for targeted Requirements-section edits, cascading `Needs Review` flags to linked docs when a parent requirement changes or a new one needs LLD design (this commit)
+- Added `/spike` command to validate a design's highest-risk technical assumption with a minimal isolated test script, resolving the corresponding `[PENDING SPIKE VALIDATION]` tag (this commit)
+- Added `/add-spike` command to flag an existing or new HLD/LLD requirement as resting on an unvalidated assumption, marking it `Needs Spike` until `/spike` confirms it (this commit)
+- Added `/resolve-open-questions` command to walk through a design doc's Open Questions interactively and fold real answers back into the doc (this commit)
+- Added `/reconcile` command to reverse-update HLD/LLD docs from real code, writing an ADR when implementation intentionally diverged from the design (this commit)
+- Updated `/implement-lld` to scope to unchecked Requirements by default (or specific rows via `--req`), roll up completed LLD sub-requirements to their parent HLD requirement, and auto-invoke `/reconcile` in Living mode (this commit)
+- `/hld`, `/lld --amend`, `/implement-lld`, `/reconcile`, `/add-spike`, `/resolve-open-questions`, and `/spike` now infer their target HLD/LLD path from the conversation when one isn't given, confirming a single match or asking when more than one applies (this commit)
+
 ## v0.3.0 (2026-08-09)
 
 ### Features
@@ -32,7 +46,6 @@
 - add commit and create-pr-github commands, update gitignore
 - initial commit
 
-
 ## v0.2.0 (2026-03-08)
 
 ### Features
@@ -62,14 +75,6 @@
 - document github-specific command naming and add resolve-conflicts fallbacks (#9)
 - add commit and create-pr-github commands, update gitignore
 - initial commit
-
-## Unreleased (minor)
-
-### Features
-
-- Added `/create-mr-gitlab-git` skill to create or update a GitLab merge request from the current branch, deriving the title and description from git history
-- MR description follows the repo's GitLab MR template (`.gitlab/merge_request_templates/`) when one exists, instead of a fixed freeform format
-- Target branch is detected as the branch the feature branch was actually created from rather than always defaulting to the repo's default branch, prompting when multiple branches tie as closest ancestor, with an explicit `--target-branch` override available
 
 ## v0.1.0
 
