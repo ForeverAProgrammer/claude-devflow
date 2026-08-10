@@ -170,9 +170,11 @@ Format a description into a structured Architecture Decision Record (ADR).
 > - Schema changes require migrations, which adds overhead when the data model evolves
 > - Vertical scaling limits apply; sharding would be complex if write volume grows significantly
 
+`/hld`, `/lld`, `/spike`, `/add-spike`, `/resolve-open-questions`, `/implement-lld`, and `/reconcile` all take an HLD or LLD path, but the path is optional everywhere it's used — if you're working through a design in one continuous conversation (the common case: `/hld`, then `/lld`, then `/spike`/`/add-spike`/`/resolve-open-questions` as questions come up, then `/implement-lld`, then `/reconcile`), each command looks back through the conversation for a path already established rather than making you repeat it every time. If exactly one applicable doc is found, it's confirmed with you before proceeding rather than assumed silently; if more than one could apply, you're asked which; if none can be found, you're asked for a path as before. Passing a path explicitly always works and skips inference entirely.
+
 ### `/hld`
 
-Generate a High Level Design document from a freeform description and write it to `design/<slug>.md`.
+Generate a High Level Design document from a freeform description and write it to `design/<slug>.md`. Both `/hld` and `/lld` output a `## Requirements` checklist and support two doc modes: **Strict** (default — fully populated, no provisional tagging) and **Living** (high-level sections stay fully populated, but genuinely uncertain low-level detail is tagged `[PENDING SPIKE VALIDATION]` instead of invented). Pass `--mode living|strict` to set it.
 
 ```text
 /hld user authentication service with JWT tokens and refresh token rotation
@@ -180,15 +182,21 @@ Generate a High Level Design document from a freeform description and write it t
 
 > Written to `design/hld-user-authentication-service-jwt.md`
 >
-> Sections populated: Overview, Goals, Non-Goals, System Context, Proposed Design, Components, Data Flow, Alternatives Considered
+> Sections populated: Overview, Goals, Non-Goals, System Context, Proposed Design, Components, Data Flow, Alternatives Considered, Requirements
 >
 > Stubs (fill in before sharing): Open Questions
 
-The filename is derived from the description slug automatically. Sections that cannot be inferred from the description are included as stubs with a prompt to fill in.
+The filename is derived from the description slug automatically. Sections that cannot be inferred from the description are included as stubs with a prompt to fill in. Running `/hld` again against a slug that already exists edits the file in place — existing `REQ-*` rows, `Mode`, `Last Reconciled`, and `Last Amended` are preserved rather than overwritten.
+
+Pass `--amend <path> <change description>` to make a targeted edit to just the `## Requirements` section of an existing HLD — no other section is touched. Changed or descoped requirements are struck through and kept (never deleted), with a successor row or reason noted. Amending also cascades into any linked LLDs (Requirements section only, in each): a changed or descoped requirement flags its existing referencing rows `Needs Review`; a brand-new requirement gets a new stub row appended (since no LLD row exists to flag yet), also marked `Needs Review` — it stays out of `/implement-lld`'s reach until you run `/lld` against it to fill in the actual design, which clears the flag.
+
+```text
+/hld --amend design/hld-user-authentication-service-jwt.md drop biometric login, it's out of scope for v1
+```
 
 ### `/lld`
 
-Generate a Low Level Design document from a freeform description and write it to `design/<slug>.md`. Pass `--hld <path>` to generate from an existing HLD file.
+Generate a Low Level Design document from a freeform description and write it to `design/<slug>.md`. Pass `--hld <path>` to generate from an existing HLD file — the LLD inherits the HLD's `Mode` unless `--mode` overrides it.
 
 ```text
 /lld user authentication service with JWT tokens and refresh token rotation
@@ -200,11 +208,21 @@ Generate a Low Level Design document from a freeform description and write it to
 
 > Written to `design/lld-user-authentication-service-jwt.md`
 >
-> Sections populated: Overview, Scope, API / Interface Design, Data Models, Component Interactions, Error Handling, Edge Cases, Testing Considerations
+> Sections populated: Overview, Scope, API / Interface Design, Data Models, Component Interactions, Error Handling, Edge Cases, Testing Considerations, Requirements
 >
 > Stubs (fill in before sharing): Open Questions
 
-Pass `--hld <path>` to generate the LLD from an existing HLD file. The HLD content is used as the primary source of context, with the Overview section linking back to it. The filename is derived from the description or HLD title slug automatically. Sections that cannot be inferred are included as stubs with a prompt to fill in.
+Pass `--hld <path>` to generate the LLD from an existing HLD file. The HLD content is used as the primary source of context, with the Overview section linking back to it. The filename is derived from the description or HLD title slug automatically. Sections that cannot be inferred are included as stubs with a prompt to fill in. Requirements reference their parent HLD requirement with a dotted sub-ID (`REQ-1.1`, `REQ-1.2` for HLD `REQ-1`). As with `/hld`, running it again against an existing slug edits in place, and `--amend <path> <change description>` targets just the Requirements section. If a run supplies the real design for a row currently marked `Needs Review` (whether from an `/hld --amend` cascade or a parent-change flag), that annotation is cleared once the design is filled in.
+
+### `/resolve-open-questions`
+
+Walk through an HLD or LLD's `## Open Questions`, asking you for a real answer to each one, then fold the answers back into the doc.
+
+```text
+/resolve-open-questions design/hld-user-auth-service.md
+```
+
+For every unchecked question, proposes 2-4 concrete answer options grounded in the doc's actual content (never generic placeholders) and waits for your answer. It never guesses or defaults on your behalf. Once answered: checks off the question with a resolution note (the original question text is never deleted), and either updates `## Requirements` (new row, or a struck-through row with a successor, using the same lifecycle rules as `--amend`) if the answer creates a new obligation, or updates the relevant design section directly if it's just a clarification. If your answer itself is uncertain, the resulting requirement is marked `Needs Spike` with a `[PENDING SPIKE VALIDATION]` tag instead of being written as settled — same convention as `/add-spike`. Run against an HLD, cascades any resulting Requirements changes to linked LLDs exactly like `/hld --amend` does.
 
 ### `/implement-lld`
 
@@ -214,7 +232,53 @@ Read a Low Level Design document and apply the code changes it describes to the 
 /implement-lld design/lld-user-auth-service.md
 ```
 
-Reads the LLD's Scope, API / Interface Design, Data Models, Component Interactions, Error Handling, and Edge Cases sections and applies the minimum code changes needed to implement them. Follows existing code conventions — no unrelated refactoring, extra comments, or unnecessary changes. Stub sections (marked `_TODO:_`) are skipped and listed in the summary. Summarises what was changed and why before stopping, leaving commit and push to you.
+```text
+/implement-lld design/lld-user-auth-service.md --req REQ-3.1
+```
+
+Reads the LLD's Mode, Scope, API / Interface Design, Data Models, Component Interactions, Error Handling, Edge Cases, and Requirements sections and applies the code changes needed to implement them, checking off each Requirements row as it's completed. By default it scopes to every unchecked (`- [ ]`) row and leaves already-completed ones untouched, so re-running it after a doc changes only implements the delta — pass `--req <ID>[,<ID>...]` to instead target specific rows explicitly (this also lets you re-implement an already-checked row on purpose). Rows marked `Needs Review` or `Needs Spike` are always excluded from scope, `--req` or not, and listed in the summary. Follows existing code conventions — no unrelated refactoring, extra comments, or unnecessary changes. Stub sections (marked `_TODO:_`) are skipped and listed in the summary. A missing `Mode` field behaves as `Strict` (unchanged from before this field existed): implement exactly as specified, no deviation. In **Living** mode, deviations are allowed where the code reveals a better approach (left for `/reconcile` to capture rather than edited into the LLD mid-implementation) and `/reconcile` is invoked automatically as a final step so docs and code land in sync. Checking off an LLD sub-requirement (`REQ-1.1`) also rolls up to check off its parent in the linked HLD (`REQ-1`) once every current row referencing that parent is complete — no separate HLD pass needed. Summarises what was changed and why before stopping, leaving commit and push to you.
+
+### `/add-spike`
+
+Flag an existing HLD or LLD requirement (or add a new one) as resting on an unvalidated technical assumption, so it can't be quietly implemented or marked done until a spike confirms it.
+
+```text
+/add-spike design/hld-user-auth-service.md REQ-4 not sure the token store can actually sustain the expected refresh rate
+```
+
+```text
+/add-spike design/hld-user-auth-service.md add a requirement that revoked tokens propagate to all edge nodes within 5 seconds, but I'm not sure that's achievable with the current cache
+```
+
+Targets an existing `REQ-*` ID (with a reason) or, given a freeform description instead, adds a brand-new requirement already flagged. Inserts a `[PENDING SPIKE VALIDATION]` tag into the relevant design section (`Proposed Design` for an HLD, `API / Interface Design` or `Data Models` for an LLD) and annotates the requirement row `_(Needs Spike — reason, flagged <date>)_`. Requires the doc to already be in Living mode, stops and tells you to switch first rather than flipping the mode as a side effect. When run against an HLD, cascades the same `Needs Spike` annotation onto any existing LLD rows that reference the flagged requirement. A `Needs Spike` row is excluded from `/implement-lld`'s scope and `/reconcile`'s checkoff exactly like `Needs Review`, until `/spike` validates the assumption and clears it. Suggests running `/spike --hld <path>` or `/spike --lld <path>` next.
+
+### `/spike`
+
+Validate the single highest-risk low-level technical assumption in a design before locking it in, by writing and running a minimal isolated test script.
+
+```text
+/spike --lld design/lld-user-auth-service.md
+```
+
+```text
+/spike --hld design/hld-user-auth-service.md
+```
+
+```text
+/spike can we refresh a JWT while the original request is still in flight without a race condition
+```
+
+Scans the given doc for `[PENDING SPIKE VALIDATION]` tags when `--lld <path>` or `--hld <path>` is given — use `--hld` when a requirement was flagged (e.g. via `/add-spike`) before any LLD exists yet or takes the assumption directly as freeform text. Writes a minimal test script to `spikes/<slug>.<ext>`, runs it, and summarizes what was found. If a design doc was linked, resolves the corresponding tag to `[VALIDATED]` or `[REVISED: <what changed>]`, backlinked to the script, and clears any `Needs Spike` annotation that pointed at that tag. Never checks off `## Requirements` rows — that's `/reconcile`'s and `/implement-lld`'s job.
+
+### `/reconcile`
+
+Eliminate architectural drift by reading passing spike or feature code and reverse-updating an HLD/LLD doc to match reality.
+
+```text
+/reconcile design/lld-user-auth-service.md
+```
+
+Diffs the codebase since the doc's `Last Reconciled` sha, plus recent files under `spikes/`, and compares real exported signatures and types against the doc's API / Interface Design and Data Models sections. If `Last Reconciled` is unset, the diff base isn't automatically the default branch — it's whichever branch this one was actually forked from (found by scoring branches on commits-ahead-of-merge-base), so a branch cut from `release/1.0` diffs against `release/1.0`, not `main`. Only falls back to the default branch if you're currently on it yourself. If the code simply caught up to the design, the doc is quietly updated. If the code intentionally diverged from the design, the doc is updated **and** an Architecture Decision Record is written to `design/adr/` capturing why. Checks off any `## Requirements` row now satisfied by the code, skips rows marked `Needs Review` or `Needs Spike`, and stamps `Last Reconciled` with today's date and the current short SHA. When run against an LLD, also rolls up to check off a parent HLD requirement once every current LLD row referencing it is complete.
 
 ### `/jira-ticket`
 
